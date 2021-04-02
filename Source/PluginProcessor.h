@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-
+#include "GranularVoice.hpp"
 //==============================================================================
 /**
 */
@@ -55,5 +55,8 @@ public:
 
 private:
     //==============================================================================
+    GranularVoice* voice;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GranulizerThingyAudioProcessor)
+    
 };
