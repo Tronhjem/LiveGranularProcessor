@@ -20,6 +20,7 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
 
 GranulizerThingyAudioProcessorEditor::~GranulizerThingyAudioProcessorEditor()
 {
+    
 }
 
 //==============================================================================

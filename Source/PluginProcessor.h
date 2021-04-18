@@ -9,7 +9,9 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "GranularVoice.hpp"
+#include "GranularVoiceController.hpp"
+#include <memory>
+
 //==============================================================================
 /**
 */
@@ -55,8 +57,13 @@ public:
 
 private:
     //==============================================================================
-    GranularVoice* voice;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GranulizerThingyAudioProcessor)
     
+    std::unique_ptr<GranularVoiceController> mGrainVoiceController;
+    
+    AudioParameterInt*  mCurrentNumberOfVoices;
+    AudioParameterInt*  mGrainWindowSize;
+    AudioParameterInt*  mGrainWidowRanSpread;
+    AudioParameterInt*  mGrainRepetition;
 };

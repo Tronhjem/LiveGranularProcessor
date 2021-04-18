@@ -7,39 +7,35 @@
 
 #ifndef GranularVoice_hpp
 #define GranularVoice_hpp
-
 #include <stdio.h>
 #include <JuceHeader.h>
+#include <array>
+
+typedef short unsigned int USHORT;
 using namespace juce;
 
 class GranularVoice {
 
 public:
     
-    GranularVoice(int maxSize, float fadeSize, int channels);
+    GranularVoice(int windowSize, int fadeSize);
+    ~GranularVoice();
+    void ProcessSample(AudioBuffer<float>& inBuffer,
+                       int currentReadPosition,
+                       std::array<double, 4>& outBufferChannels,
+                       int bufferChannelsLenght);
     
-    void SetSize(int sizeInSamples);
-    void SetPan(float pan);
-    void SetStartPosition(int startPosInSamples);
-    void SetRandomRange(int randomRange);
-    void Process(AudioBuffer<float>& buffer);
-    void SetVoiceGainAttenuation(float attenuation);
+    USHORT  GrainWindowSize = 400;
+    USHORT  GraindWindowRandomSpread = 200;
+    USHORT  MaxGrainIterations = 4;
     
 private:
-    
-    int mGrainWindowSize = 8800;
-    int mMaxSamplesCount = 35200;
-    
-    int* mCurrentSampleCount;
-    
-    int mMaxRepetition = 0;
-    int mCurrentRepetition = 0;
-    
-    float mFadeGainCoef = 0;
-    int mFadeSize = 100;
-    
-    juce::AudioBuffer<float>* mBuffer;
-    
+    USHORT  mWindowSize = 40;
+    int     mReadStartPosition = 0;
+    int     mCurrentIteration = 0;
+    double  mFadeGainCoef = 0;
+    int     mCurrentSampleCount = 0;
+    Random* mRandomGen;
 };
 
 #endif /* GranularVoice_hpp */

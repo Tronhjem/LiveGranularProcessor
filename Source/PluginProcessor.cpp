@@ -22,10 +22,46 @@ GranulizerThingyAudioProcessor::GranulizerThingyAudioProcessor()
                        )
 #endif
 {
+    int ringBufferSize = 176400;
+    int grainWindowSize = ringBufferSize / 4;
+    int spreadSize = grainWindowSize / 4;
+    
+    mGrainVoiceController = std::make_unique<GranularVoiceController>(ringBufferSize, 3);
+    
+    
+    mCurrentNumberOfVoices  =   new AudioParameterInt("numVoices",
+                                                      "NumberOfActiveVoices",
+                                                      0,
+                                                      MAX_VOICES,
+                                                      2,
+                                                      "Number of Voices");
+    
+    mGrainWindowSize        =   new AudioParameterInt("windowSize",
+                                                      "GrainWindowSize",
+                                                      20,
+                                                      grainWindowSize,
+                                                      500,
+                                                      "Grain Window Size");
+    
+    mGrainWidowRanSpread    =   new AudioParameterInt("windowRanSpread",
+                                                      "WindowRandomSpread",
+                                                      0,
+                                                      spreadSize,
+                                                      1000,
+                                                      "Window Random Size Spread");
+    
+    mGrainRepetition        =   new AudioParameterInt("grainRepetition",
+                                                      "GrainRepetition",
+                                                      1,
+                                                      100,
+                                                      1,
+                                                      "Grain Loop Repetition");
+
 }
 
 GranulizerThingyAudioProcessor::~GranulizerThingyAudioProcessor()
 {
+
 }
 
 //==============================================================================
@@ -130,21 +166,20 @@ bool GranulizerThingyAudioProcessor::isBusesLayoutSupported (const BusesLayout& 
 void GranulizerThingyAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    int totalNumInputChannels  = getTotalNumInputChannels();
-    int totalNumOutputChannels = getTotalNumOutputChannels();
+    short int totalNumInputChannels  = getTotalNumInputChannels();
+    short int totalNumOutputChannels = getTotalNumOutputChannels();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    for (short int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        float* channelData = buffer.getWritePointer (channel);
-        
-        
-        
-        
-        
-    }
+    
+    mGrainVoiceController->NumberOfCurrentVoices = mCurrentNumberOfVoices->get();
+    mGrainVoiceController->VoiceGrainWindowSize = mGrainWindowSize->get();
+    mGrainVoiceController->VoiceGrainWindowSizeRange = mGrainWidowRanSpread->get();
+    mGrainVoiceController->VoiceMaxRepition = mGrainRepetition->get();
+    
+    
+    mGrainVoiceController->Process(buffer);
+    
 }
 
 //==============================================================================

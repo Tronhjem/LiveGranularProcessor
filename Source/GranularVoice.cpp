@@ -8,80 +8,67 @@
 #include "GranularVoice.hpp"
 using namespace juce;
 
-GranularVoice::GranularVoice(int maxSize, float fadeSize, int channels)
+GranularVoice::GranularVoice(int windowSize, int fadeSize)
 {
-    mBuffer = new AudioBuffer<float>(channels, maxSize);
+    GrainWindowSize = windowSize;
+    mWindowSize = fadeSize;
     mFadeGainCoef = 1/fadeSize;
-    mFadeSize = fadeSize;
-    mCurrentSampleCount = new int[channels]{0};
+    mRandomGen = new Random();
 }
 
-void GranularVoice::Process(AudioBuffer<float>& buffer)
+GranularVoice::~GranularVoice()
 {
-    // process channels
-    for (int channel = 0; channel < buffer.getNumChannels(); channel++)
+    delete mRandomGen;
+}
+
+void GranularVoice::ProcessSample(AudioBuffer<float>& inBuffer,
+                                  int currentReadPosition,
+                                  std::array<double, 4>& outBufferChannels,
+                                  int bufferChannelsLength)
+{
+    int bufferSize = inBuffer.getNumSamples();
+    
+
+    if (mCurrentSampleCount > GrainWindowSize)
     {
-        // Process samples
-        if (mCurrentSampleCount[channel] >= mMaxSamplesCount)
-            mCurrentSampleCount = 0;
-        int bufferSize = buffer.getNumSamples();
+        mCurrentSampleCount = 0;
         
-        for (int i=0; i < bufferSize; i++)
+        if (mCurrentIteration > MaxGrainIterations)
         {
-            int channelSampleCount = mCurrentSampleCount[channel];
+            mReadStartPosition = currentReadPosition - GrainWindowSize + mRandomGen->nextInt(Range<int>(-4000,0));
+            MaxGrainIterations = mRandomGen->nextInt(Range<int>(2,100));
+            mCurrentIteration = 0;
             
-            //########################################################################
-            // sample a window
-            if (channelSampleCount < mGrainWindowSize)
-            {
-                float sampleGainFactor = 1.f;
-                
-                // fade in
-                if ( channelSampleCount < mFadeSize)
-                    sampleGainFactor = mFadeGainCoef * i;
-                
-                // fade out
-                else if (channelSampleCount > mGrainWindowSize - mFadeSize)
-                    sampleGainFactor = mFadeGainCoef * (mGrainWindowSize - i);
-                
-                float processedSample =  buffer.getSample(channel, i) * sampleGainFactor;
-                
-                mBuffer -> setSample(channel, i, processedSample);
-            }
-            //########################################################################
-            // repeat that window.
-            else if (channelSampleCount < mMaxSamplesCount)
-            {
-                float processedSample = mBuffer->getSample(channel, channelSampleCount % mGrainWindowSize);
-                buffer.setSample(channel, i, processedSample);
-            }
-            //########################################################################
-            mCurrentSampleCount[channel]++;
+            GrainWindowSize = mRandomGen->nextInt(Range<int>(260,900));
+            // wrap around.
+            if (mReadStartPosition < 0)
+                mReadStartPosition += bufferSize;
         }
+        else
+            mCurrentIteration++;
     }
-}
-
-void GranularVoice::SetSize(int sizeInSamples)
-{
-
-}
-
-void GranularVoice::SetPan(float pan)
-{
     
-}
-
-void GranularVoice::SetStartPosition(int startPosInSamples)
-{
+    double sampleGainFactor = 1.f;
     
-}
+    // fade in
+    if (mCurrentSampleCount <= mWindowSize)
+        sampleGainFactor = mFadeGainCoef * mCurrentSampleCount;
 
-void GranularVoice::SetRandomRange(int randomRange)
-{
- 
-}
-
-void GranularVoice::SetVoiceGainAttenuation(float attenuation)
-{
+    // fade out
+    else if (mCurrentSampleCount >= GrainWindowSize - mWindowSize)
+        sampleGainFactor = mFadeGainCoef * (GrainWindowSize - mCurrentSampleCount);
     
+    // squared gain
+    sampleGainFactor *= sampleGainFactor;
+    
+    int readPosition = mReadStartPosition + mCurrentSampleCount;
+    
+    if (readPosition >= bufferSize)
+        readPosition = readPosition - bufferSize;
+    
+    for (int channel = 0; channel < bufferChannelsLength; channel++)
+        outBufferChannels[channel] += inBuffer.getSample(channel, readPosition) * sampleGainFactor * 0.25f;
+    
+    mCurrentSampleCount++;
 }
+
