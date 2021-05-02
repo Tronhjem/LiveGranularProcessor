@@ -12,11 +12,10 @@
 #include "GranularVoice.hpp"
 #include <array>
 #include <memory>
+#include "AudioBuffer.hpp"
 
 #define MAX_VOICES 10
 typedef unsigned short int USHORT;
-
-using namespace juce;
 
 class GranularVoiceController {
 
@@ -24,17 +23,16 @@ public:
     GranularVoiceController(int maxLengthInSamples, int numberOfVoices);
     ~GranularVoiceController();
     
-    void    Process(AudioBuffer<float>& inBuffer);
+    void    Process(juce::AudioBuffer<float>& inBuffer);
     USHORT  VoiceGrainWindowSize = 9000;
-    int     VoiceGrainWindowSizeRange = 1000;
+    UINT    VoiceGrainWindowSizeRange = 1000;
     USHORT  NumberOfCurrentVoices = 6;
     USHORT  VoiceMaxRepition = 2;
-    
     
 private:
     USHORT  mVoiceFadeSize = 50;
     int     mChannelBufferPosition = 0;
-    std::unique_ptr<AudioBuffer<float>> mRingBuffer;
+    Granulizer::AudioBuffer* mRingBuffer;
     std::array<std::unique_ptr<GranularVoice>, MAX_VOICES> mVoices;
     std::array<double, 4> mBufferChannels;
 };

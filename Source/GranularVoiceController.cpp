@@ -6,50 +6,40 @@
 //
 
 #include "GranularVoiceController.hpp"
-using namespace juce;
 
 GranularVoiceController::GranularVoiceController(int maxLengthInSamples, int numberOfVoices)
 {
-    for (int i=0; i < mVoices.size(); i++) {
+    for (int i=0; i < mVoices.size(); i++)
         mVoices[i] = std::make_unique<GranularVoice>(VoiceGrainWindowSize, mVoiceFadeSize);
-    }
     
     NumberOfCurrentVoices = numberOfVoices;
      
     if (NumberOfCurrentVoices > mVoices.size())
         NumberOfCurrentVoices = (int)mVoices.size();
     
-    mRingBuffer = std::make_unique<AudioBuffer<float>>(2, maxLengthInSamples);
+    mRingBuffer = new Granulizer::AudioBuffer(2, maxLengthInSamples);
 }
 
 GranularVoiceController::~GranularVoiceController()
 {
-    
+    delete mRingBuffer;
 }
 
 void GranularVoiceController::Process(AudioBuffer<float>& inBuffer)
 {
     int inBufferSize = inBuffer.getNumSamples();
     int channels = inBuffer.getNumChannels();
-    int ringBufferSize = mRingBuffer->getNumSamples();
+    int ringBufferSize = mRingBuffer->GetNumOfSamples();
     
     for (int sample=0; sample < inBufferSize; sample++)
     {
         if (mChannelBufferPosition >= ringBufferSize)
-        {
             mChannelBufferPosition = 0;
-        }
         
         for (int channel=0; channel < channels; channel++)
         {
-            mRingBuffer->setSample(channel,
-                                   mChannelBufferPosition,
-                                   inBuffer.getSample(channel, sample));
-            
-            inBuffer.setSample(channel,
-                               sample,
-                               mBufferChannels[channel]);
-            
+            mRingBuffer->SetSample(channel, mChannelBufferPosition, inBuffer.getSample(channel, sample));
+            inBuffer.setSample(channel, sample, mBufferChannels[channel]);
             mBufferChannels[channel] = 0;
         }
         
@@ -57,10 +47,13 @@ void GranularVoiceController::Process(AudioBuffer<float>& inBuffer)
         
         for (int i = 0; i < NumberOfCurrentVoices; i++)
         {
-            mVoices[i]->ProcessSample(*mRingBuffer,
-                                      mChannelBufferPosition,
-                                      mBufferChannels,
-                                      channels);
+            // Set voice params
+            mVoices[i]->GrainWindowSize = VoiceGrainWindowSize;
+            mVoices[i]->GraindWindowRandomSpread = VoiceGrainWindowSizeRange;
+            mVoices[i]->MaxGrainIterations = VoiceMaxRepition;
+
+            // Process voice
+            mVoices[i]->ProcessSample(*mRingBuffer, mChannelBufferPosition, mBufferChannels, channels);
         }
     }    
 }

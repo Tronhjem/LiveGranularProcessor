@@ -21,25 +21,27 @@ GranularVoice::~GranularVoice()
     delete mRandomGen;
 }
 
-void GranularVoice::ProcessSample(AudioBuffer<float>& inBuffer,
+void GranularVoice::ProcessSample(Granulizer::AudioBuffer& inBuffer,
                                   int currentReadPosition,
                                   std::array<double, 4>& outBufferChannels,
                                   int bufferChannelsLength)
 {
-    int bufferSize = inBuffer.getNumSamples();
+    int bufferSize = inBuffer.GetNumOfSamples();
     
-
     if (mCurrentSampleCount > GrainWindowSize)
     {
         mCurrentSampleCount = 0;
         
         if (mCurrentIteration > MaxGrainIterations)
         {
-            mReadStartPosition = currentReadPosition - GrainWindowSize + mRandomGen->nextInt(Range<int>(-4000,0));
-            MaxGrainIterations = mRandomGen->nextInt(Range<int>(2,100));
+            int randomRange = mRandomGen->nextInt(Range<int>(GraindWindowRandomSpread * -1, 0 ));
+            GrainWindowSize = 
+            mReadStartPosition = currentReadPosition - GrainWindowSize + randomRange;
             mCurrentIteration = 0;
-            
-            GrainWindowSize = mRandomGen->nextInt(Range<int>(260,900));
+
+//            MaxGrainIterations = mRandomGen->nextInt(Range<int>(2,100));
+//            GrainWindowSize = mRandomGen->nextInt(Range<int>(260,900));
+
             // wrap around.
             if (mReadStartPosition < 0)
                 mReadStartPosition += bufferSize;
@@ -67,7 +69,7 @@ void GranularVoice::ProcessSample(AudioBuffer<float>& inBuffer,
         readPosition = readPosition - bufferSize;
     
     for (int channel = 0; channel < bufferChannelsLength; channel++)
-        outBufferChannels[channel] += inBuffer.getSample(channel, readPosition) * sampleGainFactor * 0.25f;
+        outBufferChannels[channel] += inBuffer.GetSample(channel, readPosition) * sampleGainFactor * 0.25f;
     
     mCurrentSampleCount++;
 }

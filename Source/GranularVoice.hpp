@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <JuceHeader.h>
 #include <array>
+#include "AudioBuffer.hpp"
 
 typedef short unsigned int USHORT;
 using namespace juce;
@@ -20,7 +21,7 @@ public:
     
     GranularVoice(int windowSize, int fadeSize);
     ~GranularVoice();
-    void ProcessSample(AudioBuffer<float>& inBuffer,
+    void ProcessSample(Granulizer::AudioBuffer& inBuffer,
                        int currentReadPosition,
                        std::array<double, 4>& outBufferChannels,
                        int bufferChannelsLenght);

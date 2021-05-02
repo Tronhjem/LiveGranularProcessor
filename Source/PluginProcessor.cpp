@@ -28,7 +28,6 @@ GranulizerThingyAudioProcessor::GranulizerThingyAudioProcessor()
     
     mGrainVoiceController = std::make_unique<GranularVoiceController>(ringBufferSize, 3);
     
-    
     mCurrentNumberOfVoices  =   new AudioParameterInt("numVoices",
                                                       "NumberOfActiveVoices",
                                                       0,
@@ -36,13 +35,14 @@ GranulizerThingyAudioProcessor::GranulizerThingyAudioProcessor()
                                                       2,
                                                       "Number of Voices");
     
+    addParameter(mCurrentNumberOfVoices);
     mGrainWindowSize        =   new AudioParameterInt("windowSize",
                                                       "GrainWindowSize",
                                                       20,
                                                       grainWindowSize,
                                                       500,
                                                       "Grain Window Size");
-    
+    addParameter(mGrainWindowSize);
     mGrainWidowRanSpread    =   new AudioParameterInt("windowRanSpread",
                                                       "WindowRandomSpread",
                                                       0,
@@ -50,13 +50,14 @@ GranulizerThingyAudioProcessor::GranulizerThingyAudioProcessor()
                                                       1000,
                                                       "Window Random Size Spread");
     
+    addParameter(mGrainWidowRanSpread);
     mGrainRepetition        =   new AudioParameterInt("grainRepetition",
                                                       "GrainRepetition",
                                                       1,
                                                       100,
                                                       1,
                                                       "Grain Loop Repetition");
-
+    addParameter(mGrainRepetition);
 }
 
 GranulizerThingyAudioProcessor::~GranulizerThingyAudioProcessor()
