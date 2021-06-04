@@ -33,7 +33,7 @@ private:
     USHORT  mVoiceFadeSize = 50;
     int     mChannelBufferPosition = 0;
     Granulizer::AudioBuffer* mRingBuffer;
-    std::array<std::unique_ptr<GranularVoice>, MAX_VOICES> mVoices;
+    std::array<GranularVoice*, MAX_VOICES> mVoices;
     std::array<double, 4> mBufferChannels;
 };
  

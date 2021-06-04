@@ -178,7 +178,6 @@ void GranulizerThingyAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     mGrainVoiceController->VoiceGrainWindowSizeRange = mGrainWidowRanSpread->get();
     mGrainVoiceController->VoiceMaxRepition = mGrainRepetition->get();
     
-    
     mGrainVoiceController->Process(buffer);
     
 }

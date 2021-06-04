@@ -9,8 +9,8 @@
 
 GranularVoiceController::GranularVoiceController(int maxLengthInSamples, int numberOfVoices)
 {
-    for (int i=0; i < mVoices.size(); i++)
-        mVoices[i] = std::make_unique<GranularVoice>(VoiceGrainWindowSize, mVoiceFadeSize);
+    for (USHORT i = 0; i < mVoices.size(); i++)
+        mVoices[i] = new GranularVoice(VoiceGrainWindowSize, mVoiceFadeSize);
     
     NumberOfCurrentVoices = numberOfVoices;
      
@@ -36,7 +36,7 @@ void GranularVoiceController::Process(AudioBuffer<float>& inBuffer)
         if (mChannelBufferPosition >= ringBufferSize)
             mChannelBufferPosition = 0;
         
-        for (int channel=0; channel < channels; channel++)
+        for (USHORT channel=0; channel < channels; channel++)
         {
             mRingBuffer->SetSample(channel, mChannelBufferPosition, inBuffer.getSample(channel, sample));
             inBuffer.setSample(channel, sample, mBufferChannels[channel]);
@@ -45,7 +45,7 @@ void GranularVoiceController::Process(AudioBuffer<float>& inBuffer)
         
         mChannelBufferPosition++;
         
-        for (int i = 0; i < NumberOfCurrentVoices; i++)
+        for (USHORT i = 0; i < NumberOfCurrentVoices; i++)
         {
             // Set voice params
             mVoices[i]->GrainWindowSize = VoiceGrainWindowSize;
