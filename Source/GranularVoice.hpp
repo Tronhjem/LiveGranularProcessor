@@ -10,33 +10,36 @@
 #include <stdio.h>
 #include <JuceHeader.h>
 #include <array>
-#include "AudioBuffer.hpp"
+#include "AudioBuffer.h"
+#include "Envelope.h"
 
 typedef short unsigned int USHORT;
 using namespace juce;
 
+
+class GranularVoiceController;
+
 class GranularVoice {
 
 public:
-    
-    GranularVoice(int windowSize, int fadeSize);
+    GranularVoice(int windowSize, int fadeSize, int numOfChannels, GranularVoiceController* const controller);
     ~GranularVoice();
-    void ProcessSample(Granulizer::AudioBuffer& inBuffer,
-                       int currentReadPosition,
-                       std::array<double, 4>& outBufferChannels,
-                       int bufferChannelsLenght);
     
-    USHORT  GrainWindowSize = 400;
-    USHORT  GraindWindowRandomSpread = 200;
-    USHORT  MaxGrainIterations = 4;
+    float ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT channel);
+    
+    USHORT                          GrainWindowSize = 400;
+    USHORT                          GraindWindowRandomSpread = 200;
+    USHORT                          MaxGrainIterations = 4;
     
 private:
-    USHORT  mWindowSize = 40;
-    int     mReadStartPosition = 0;
-    int     mCurrentIteration = 0;
-    double  mFadeGainCoef = 0;
-    int     mCurrentSampleCount = 0;
-    Random* mRandomGen;
+    const GranularVoiceController*  mController;
+    USHORT                          mWindowSize = 40;
+    int                             mReadStartPosition = 0;
+    double                          mFadeGainCoef = 0;
+    int                             mCurrentIteration;
+    int                             mCurrentSampleCount;
+    Random*                         mRandomGen;
+    
 };
 
 #endif /* GranularVoice_hpp */

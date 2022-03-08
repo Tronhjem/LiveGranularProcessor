@@ -62,8 +62,13 @@ private:
     
     std::unique_ptr<GranularVoiceController> mGrainVoiceController;
     
-    AudioParameterInt*  mCurrentNumberOfVoices;
-    AudioParameterInt*  mGrainWindowSize;
-    AudioParameterInt*  mGrainWidowRanSpread;
-    AudioParameterInt*  mGrainRepetition;
+    int mSampleRate = 44100;
+    float mSampleRateMiliseconds = 44.1f;
+    
+    AudioParameterInt*      mCurrentNumberOfVoices;
+    AudioParameterInt*      mGrainWindowSize;
+    AudioParameterInt*      mGrainWidowRanSpread;
+    AudioParameterInt*      mGrainRepetition;
+    AudioParameterFloat*    mDryLevel;
+    AudioParameterFloat*    mWetLevel;
 };

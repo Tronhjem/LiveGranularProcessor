@@ -19,7 +19,7 @@ class GranulizerThingyAudioProcessorEditor  : public juce::AudioProcessorEditor
 public:
     GranulizerThingyAudioProcessorEditor (GranulizerThingyAudioProcessor&);
     ~GranulizerThingyAudioProcessorEditor() override;
-
+    
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -29,5 +29,12 @@ private:
     // access the processor object that created it.
     GranulizerThingyAudioProcessor& audioProcessor;
 
+    juce::Slider mVoicesSlider;
+    juce::Slider mWindowSizeSlider;
+    
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GranulizerThingyAudioProcessorEditor)
+
+    
+
 };

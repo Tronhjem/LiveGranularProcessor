@@ -12,10 +12,13 @@
 #include "GranularVoice.hpp"
 #include <array>
 #include <memory>
-#include "AudioBuffer.hpp"
+#include "AudioBuffer.h"
+#include "CTTypes.h"
+#include "Envelope.h"
 
-#define MAX_VOICES 10
-typedef unsigned short int USHORT;
+#define MAX_VOICES 6
+#define ENVELOPE_SIZE 2048
+#define ENVELOPE_FADE_PERCENT 0.125
 
 class GranularVoiceController {
 
@@ -23,18 +26,23 @@ public:
     GranularVoiceController(int maxLengthInSamples, int numberOfVoices);
     ~GranularVoiceController();
     
-    void    Process(juce::AudioBuffer<float>& inBuffer);
-    USHORT  VoiceGrainWindowSize = 9000;
-    UINT    VoiceGrainWindowSizeRange = 1000;
-    USHORT  NumberOfCurrentVoices = 6;
-    USHORT  VoiceMaxRepition = 2;
+    void                Process(juce::AudioBuffer<float>& inBuffer);
+    int                 GetCurrentPosition(int channel) const;
+    UINT                VoiceGrainWindowSizeRange = 1000;
+    USHORT              VoiceGrainWindowSize = 500;
+    USHORT              NumberOfCurrentVoices = 4;
+    USHORT              VoiceMaxRepition = 4;
+    float               WetGain = 1.f;
+    float               DryGain = 0.5f;
+    
+    const CTDSP::Envelope* const mEnvelope = new CTDSP::Envelope(ENVELOPE_SIZE, ENVELOPE_FADE_PERCENT);
     
 private:
-    USHORT  mVoiceFadeSize = 50;
-    int     mChannelBufferPosition = 0;
-    Granulizer::AudioBuffer* mRingBuffer;
-    std::array<GranularVoice*, MAX_VOICES> mVoices;
-    std::array<double, 4> mBufferChannels;
+    USHORT              mVoiceFadeSize = 50;
+    
+    CTDSP::AudioBuffer<float>* mRingBuffer;
+    std::array<GranularVoice*, MAX_VOICES * 2> mVoices;
+    
 };
  
 #endif /* GranularVoiceConroller_hpp */

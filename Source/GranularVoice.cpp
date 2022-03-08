@@ -6,14 +6,18 @@
 //
 
 #include "GranularVoice.hpp"
+#include "GranularVoiceController.hpp"
+#include <random>
 using namespace juce;
 
-GranularVoice::GranularVoice(int windowSize, int fadeSize)
+
+GranularVoice::GranularVoice(int windowSize, int fadeSize, int numOfChannels, GranularVoiceController* const controller)
 {
     GrainWindowSize = windowSize;
     mWindowSize = fadeSize;
-    mFadeGainCoef = 1/fadeSize;
+    mFadeGainCoef = static_cast<double>(1.f/fadeSize);
     mRandomGen = new Random();
+    mController = controller;
 }
 
 GranularVoice::~GranularVoice()
@@ -21,26 +25,26 @@ GranularVoice::~GranularVoice()
     delete mRandomGen;
 }
 
-void GranularVoice::ProcessSample(Granulizer::AudioBuffer& inBuffer,
-                                  int currentReadPosition,
-                                  std::array<double, 4>& outBufferChannels,
-                                  int bufferChannelsLength)
+float GranularVoice::ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT channel)
 {
-    int bufferSize = inBuffer.GetNumOfSamples();
+    UINT bufferSize = inBuffer.GetSizeInSamples();
     
     if (mCurrentSampleCount > GrainWindowSize)
     {
         mCurrentSampleCount = 0;
-
+        
         if (mCurrentIteration > MaxGrainIterations)
         {
-            int randomRange = mRandomGen->nextInt(Range<int>(GraindWindowRandomSpread * -1, 0 ));
-//            GrainWindowSize =
-//              + randomRange;
-//            MaxGrainIterations = mRandomGen->nextInt(Range<int>(2,100));
-//            GrainWindowSize = mRandomGen->nextInt(Range<int>(260,900));
+            int randomRange = mRandomGen->nextInt((mController->VoiceGrainWindowSizeRange + 1));
+            int windowSize = mController->VoiceGrainWindowSize;
+            
+            GrainWindowSize = (randomRange - (randomRange * 0.5)) + windowSize;
+            if (GrainWindowSize <= 5)
+                GrainWindowSize = 5;
+                                                  
+            MaxGrainIterations = mController->VoiceMaxRepition + mRandomGen->nextInt(5);
 
-            mReadStartPosition = currentReadPosition - GrainWindowSize + randomRange;
+            mReadStartPosition = mController->GetCurrentPosition(channel) - GrainWindowSize;
             mCurrentIteration = 0;
             
             // wrap around.
@@ -51,17 +55,17 @@ void GranularVoice::ProcessSample(Granulizer::AudioBuffer& inBuffer,
             mCurrentIteration++;
     }
     
-    double sampleGainFactor = 1.f;
+    double sampleGainFactor = mController->mEnvelope->GetEnvelope(0.5);
     
-    // fade in
-    if (mCurrentSampleCount <= mWindowSize)
-        sampleGainFactor = mFadeGainCoef * mCurrentSampleCount;
-
-    // fade out
-    else if (mCurrentSampleCount >= GrainWindowSize - mWindowSize)
-        sampleGainFactor = mFadeGainCoef * (GrainWindowSize - mCurrentSampleCount);
-    
-    // squared gain
+//    // fade in
+//    if (mCurrentSampleCount <= mWindowSize)
+//        sampleGainFactor = mFadeGainCoef * mCurrentSampleCount;
+//
+//    // fade out
+//    else if (mCurrentSampleCount >= GrainWindowSize - mWindowSize)
+//        sampleGainFactor = mFadeGainCoef * (GrainWindowSize - mCurrentSampleCount);
+//
+//    // squared gain
     sampleGainFactor *= sampleGainFactor;
     
     int readPosition = mReadStartPosition + mCurrentSampleCount;
@@ -69,9 +73,7 @@ void GranularVoice::ProcessSample(Granulizer::AudioBuffer& inBuffer,
     if (readPosition >= bufferSize)
         readPosition = readPosition - bufferSize;
     
-    for (USHORT channel = 0; channel < bufferChannelsLength; channel++)
-        outBufferChannels[channel] += inBuffer.GetSample(channel, readPosition) * sampleGainFactor * 0.25f;
-    
     mCurrentSampleCount++;
+    
+    return inBuffer.GetSample(channel, readPosition) * sampleGainFactor;
 }
-
