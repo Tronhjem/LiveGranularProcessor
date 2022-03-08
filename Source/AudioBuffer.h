@@ -49,7 +49,6 @@ public:
     }
     
     /// Get Sample at index.
- 
     SampleType GetSample(USHORT channel, int index)
     {
 #if DEBUG

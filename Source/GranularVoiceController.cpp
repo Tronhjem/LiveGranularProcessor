@@ -12,7 +12,7 @@
 GranularVoiceController::GranularVoiceController(int maxLengthInSamples, int numberOfVoices)
 {
     for (USHORT i = 0; i < mVoices.size(); i++)
-        mVoices[i] = new GranularVoice(VoiceGrainWindowSize, mVoiceFadeSize, 2, this);
+        mVoices[i] = new GranularVoice(VoiceGrainWindowSize, 2, this);
     
     NumberOfCurrentVoices = numberOfVoices;
     

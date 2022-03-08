@@ -8,14 +8,13 @@
 #include "GranularVoice.hpp"
 #include "GranularVoiceController.hpp"
 #include <random>
+#define MINIMUM_WINDOW_SIZE 30
 using namespace juce;
 
 
-GranularVoice::GranularVoice(int windowSize, int fadeSize, int numOfChannels, GranularVoiceController* const controller)
+GranularVoice::GranularVoice(int windowSize, int numOfChannels, GranularVoiceController* const controller)
 {
-    GrainWindowSize = windowSize;
-    mWindowSize = fadeSize;
-    mFadeGainCoef = static_cast<double>(1.f/fadeSize);
+    mGrainWindowSize = windowSize;
     mRandomGen = new Random();
     mController = controller;
 }
@@ -29,22 +28,22 @@ float GranularVoice::ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT c
 {
     UINT bufferSize = inBuffer.GetSizeInSamples();
     
-    if (mCurrentSampleCount > GrainWindowSize)
+    if (mCurrentSampleCount > mGrainWindowSize)
     {
         mCurrentSampleCount = 0;
         
-        if (mCurrentIteration > MaxGrainIterations)
+        if (mCurrentIteration > mMaxGrainIterations)
         {
             int randomRange = mRandomGen->nextInt((mController->VoiceGrainWindowSizeRange + 1));
             int windowSize = mController->VoiceGrainWindowSize;
             
-            GrainWindowSize = (randomRange - (randomRange * 0.5)) + windowSize;
-            if (GrainWindowSize <= 5)
-                GrainWindowSize = 5;
+            mGrainWindowSize = (randomRange - (randomRange * 0.5)) + windowSize;
+            if (mGrainWindowSize <= MINIMUM_WINDOW_SIZE)
+                mGrainWindowSize = MINIMUM_WINDOW_SIZE;
                                                   
-            MaxGrainIterations = mController->VoiceMaxRepition + mRandomGen->nextInt(5);
+            mMaxGrainIterations = mController->VoiceMaxRepition + mRandomGen->nextInt(5);
 
-            mReadStartPosition = mController->GetCurrentPosition(channel) - GrainWindowSize;
+            mReadStartPosition = mController->GetCurrentPosition(channel) - mGrainWindowSize;
             mCurrentIteration = 0;
             
             // wrap around.
@@ -55,17 +54,10 @@ float GranularVoice::ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT c
             mCurrentIteration++;
     }
     
-    double sampleGainFactor = mController->mEnvelope->GetEnvelope(0.5);
+    double progression = static_cast<double>(mCurrentSampleCount) / static_cast<double>(mGrainWindowSize);
+    double sampleGainFactor = mController->mEnvelope->GetEnvelope(progression);
     
-//    // fade in
-//    if (mCurrentSampleCount <= mWindowSize)
-//        sampleGainFactor = mFadeGainCoef * mCurrentSampleCount;
-//
-//    // fade out
-//    else if (mCurrentSampleCount >= GrainWindowSize - mWindowSize)
-//        sampleGainFactor = mFadeGainCoef * (GrainWindowSize - mCurrentSampleCount);
-//
-//    // squared gain
+    //    // squared gain
     sampleGainFactor *= sampleGainFactor;
     
     int readPosition = mReadStartPosition + mCurrentSampleCount;

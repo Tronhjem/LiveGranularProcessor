@@ -16,30 +16,25 @@
 typedef short unsigned int USHORT;
 using namespace juce;
 
-
 class GranularVoiceController;
 
 class GranularVoice {
 
 public:
-    GranularVoice(int windowSize, int fadeSize, int numOfChannels, GranularVoiceController* const controller);
+    GranularVoice(int windowSize, int numOfChannels, GranularVoiceController* const controller);
     ~GranularVoice();
     
     float ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT channel);
     
-    USHORT                          GrainWindowSize = 400;
-    USHORT                          GraindWindowRandomSpread = 200;
-    USHORT                          MaxGrainIterations = 4;
-    
 private:
-    const GranularVoiceController*  mController;
-    USHORT                          mWindowSize = 40;
+    USHORT                          mGrainWindowSize = 400;
+    USHORT                          mGraindWindowRandomSpread = 200;
+    USHORT                          mMaxGrainIterations = 4;
     int                             mReadStartPosition = 0;
-    double                          mFadeGainCoef = 0;
-    int                             mCurrentIteration;
-    int                             mCurrentSampleCount;
+    int                             mCurrentIteration = 0;
+    int                             mCurrentSampleCount = 0;
+    const GranularVoiceController*  mController;
     Random*                         mRandomGen;
-    
 };
 
 #endif /* GranularVoice_hpp */
