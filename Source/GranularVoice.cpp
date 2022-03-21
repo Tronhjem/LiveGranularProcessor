@@ -55,7 +55,7 @@ float GranularVoice::ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT c
     }
     
     double progression = static_cast<double>(mCurrentSampleCount) / static_cast<double>(mGrainWindowSize);
-    double sampleGainFactor = mController->mEnvelope->GetEnvelope(progression);
+    double sampleGainFactor = mController->mEnvelope.GetEnvelope(progression);
     
     //    // squared gain
     sampleGainFactor *= sampleGainFactor;

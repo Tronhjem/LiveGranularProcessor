@@ -9,7 +9,7 @@
 #include "GranularVoice.hpp"
 
 
-GranularVoiceController::GranularVoiceController(int maxLengthInSamples, int numberOfVoices)
+GranularVoiceController::GranularVoiceController(int maxLengthInSamples, int numberOfVoices) 
 {
     for (USHORT i = 0; i < mVoices.size(); i++)
         mVoices[i] = new GranularVoice(VoiceGrainWindowSize, 2, this);
@@ -22,14 +22,12 @@ GranularVoiceController::GranularVoiceController(int maxLengthInSamples, int num
 GranularVoiceController::~GranularVoiceController()
 {
     delete mRingBuffer;
-    delete mEnvelope;
 }
 
 void GranularVoiceController::Process(AudioBuffer<float>& inBuffer)
 {
     int inBufferSize = inBuffer.getNumSamples();
     int numOfChannels = inBuffer.getNumChannels();
-    
     
     for (int channel=0; channel < numOfChannels; ++channel)
     {
@@ -52,6 +50,7 @@ void GranularVoiceController::Process(AudioBuffer<float>& inBuffer)
             sum /= NumberOfCurrentVoices;
             float tempDry = inBufferPointer[j];
             inBufferPointer[j] = tempDry * DryGain + static_cast<float>(sum * WetGain);
+//            inBufferPointer[j] = tempDry;
         }
     }
 }

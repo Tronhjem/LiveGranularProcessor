@@ -26,22 +26,20 @@ public:
     GranularVoiceController(int maxLengthInSamples, int numberOfVoices);
     ~GranularVoiceController();
     
-    void                Process(juce::AudioBuffer<float>& inBuffer);
-    int                 GetCurrentPosition(int channel) const;
-    UINT                VoiceGrainWindowSizeRange = 1000;
-    USHORT              VoiceGrainWindowSize = 500;
-    USHORT              NumberOfCurrentVoices = 4;
-    USHORT              VoiceMaxRepition = 4;
-    float               WetGain = 1.f;
-    float               DryGain = 0.5f;
-    
-    const CTDSP::Envelope* const mEnvelope = new CTDSP::Envelope(ENVELOPE_SIZE, ENVELOPE_FADE_PERCENT);
+    void                                        Process(juce::AudioBuffer<float>& inBuffer);
+    int                                         GetCurrentPosition(int channel) const;
+    UINT                                        VoiceGrainWindowSizeRange = 1000;
+    USHORT                                      VoiceGrainWindowSize = 500;
+    USHORT                                      NumberOfCurrentVoices = 4;
+    USHORT                                      VoiceMaxRepition = 4;
+    float                                       WetGain = 1.f;
+    float                                       DryGain = 0.5f;
+    const CTDSP::Envelope                       mEnvelope {ENVELOPE_SIZE, ENVELOPE_FADE_PERCENT};
     
 private:
-    USHORT              mVoiceFadeSize = 50;
-    
-    CTDSP::AudioBuffer<float>* mRingBuffer;
-    std::array<GranularVoice*, MAX_VOICES * 2> mVoices;
+    USHORT                                      mVoiceFadeSize = 50;
+    CTDSP::AudioBuffer<float>*                  mRingBuffer;
+    std::array<GranularVoice*, MAX_VOICES * 2>  mVoices;
     
 };
  
