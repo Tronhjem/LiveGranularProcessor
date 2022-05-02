@@ -28,9 +28,15 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     addAndMakeVisible(mNumOfVoicesSlider);
     mParamListenerVoices = new ParameterListenerInt(static_cast<AudioParameterInt*>(params.getUnchecked(0)));
     mNumOfVoicesSlider.addListener(mParamListenerVoices);
+    
+    mNumOfVoicesLabel.attachToComponent(&mNumOfVoicesSlider, false);
+    mNumOfVoicesLabel.setText("Voices", juce::dontSendNotification);
+    mNumOfVoicesLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(mNumOfVoicesLabel);
    
+    // ===========================================================================================
     mSliderWidthIncrement += mSliderWidth + mSliderMargin;
-    // WindowSize Slider
+    // WindowSize Slider ====
     mWindowSizeSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     mWindowSizeSlider.setBounds(mSliderWidthIncrement, mSliderHeightOffset, mSliderWidth, mSliderHeight);
     mWindowSizeSlider.setRange(10.f, 2000.f, 0.1f);
@@ -40,6 +46,13 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     mParamListenerWindowSize = new ParameterListenerFloat(static_cast<AudioParameterFloat*>(params.getUnchecked(1)));
     mWindowSizeSlider.addListener(mParamListenerWindowSize);
     addAndMakeVisible(mWindowSizeSlider);
+    
+    mWindowSizeLabel.attachToComponent(&mWindowSizeSlider, false);
+    mWindowSizeLabel.setText("Grain Size", juce::dontSendNotification);
+    mWindowSizeLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(mWindowSizeLabel);
+    
+    // ===========================================================================================
     
     mSliderWidthIncrement += mSliderWidth + mSliderMargin;
     // WindowSize Random range Slider
@@ -53,6 +66,12 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     mWindowSizeRandomRangeSlider.addListener(mParamListenerWindowSizeRandom);
     addAndMakeVisible(mWindowSizeRandomRangeSlider);
     
+    mWinodowSizeRandomLabel.attachToComponent(&mWindowSizeRandomRangeSlider, false);
+    mWinodowSizeRandomLabel.setText("Random Range", juce::dontSendNotification);
+    mWinodowSizeRandomLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(mWinodowSizeRandomLabel);
+    
+    // ===========================================================================================
     mSliderWidthIncrement += mSliderWidth + mSliderMargin;
     // Repetition slider
     mGrainRepetitionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
@@ -64,6 +83,13 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     mParamListenerReptition = new ParameterListenerInt(static_cast<AudioParameterInt*>(params.getUnchecked(3)));
     mGrainRepetitionSlider.addListener(mParamListenerReptition);
     addAndMakeVisible(mGrainRepetitionSlider);
+    
+    mRepetitionLabel.attachToComponent(&mGrainRepetitionSlider, false);
+    mRepetitionLabel.setText("Repetitions", juce::dontSendNotification);
+    mRepetitionLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(mRepetitionLabel);
+    
+    // ===========================================================================================
     
     mSliderWidthIncrement += mSliderWidth + mSliderMargin;
     // DRY slider
@@ -77,6 +103,12 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     mDryLevelSlider.addListener(mParamListenerDryLevel);
     addAndMakeVisible(mDryLevelSlider);
     
+    mDryLevelLabel.attachToComponent(&mDryLevelSlider, false);
+    mDryLevelLabel.setText("Dry", juce::dontSendNotification);
+    mDryLevelLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(mDryLevelLabel);
+    
+    // ===========================================================================================
     mSliderWidthIncrement += mSliderWidth + mSliderMargin;
     // Wet slider
     mWetLevelSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
@@ -88,6 +120,12 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     mWetLevelSlider.addListener(mParamListenerWetLevel);
     addAndMakeVisible(mWetLevelSlider);
     
+    mWetLevelLabel.attachToComponent(&mWetLevelSlider, false);
+    mWetLevelLabel.setText("Wet", juce::dontSendNotification);
+    mWetLevelLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(mWetLevelLabel);
+    
+    // ===========================================================================================
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (mTotalWidth, mTotalHeight);
@@ -108,28 +146,10 @@ GranulizerThingyAudioProcessorEditor::~GranulizerThingyAudioProcessorEditor()
 void GranulizerThingyAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll (getLookAndFeel().findColour (0));
 
     g.setColour (juce::Colours::white);
     g.setFont (12.0f);
-    
-    int runningWidth = 0;
-    g.drawText("Voices", runningWidth, mTextOffset, mTextWidth, mTextHeight, juce::Justification::centred);
-    
-    runningWidth += mTextWidth;
-    g.drawText("Window Size", runningWidth, mTextOffset, mTextWidth, mTextHeight, juce::Justification::centred);
-    
-    runningWidth += mTextWidth;
-    g.drawText("Window Range", runningWidth, mTextOffset, mTextWidth, mTextHeight, juce::Justification::centred);
-    
-    runningWidth += mTextWidth;
-    g.drawText("Repitions", runningWidth, mTextOffset, mTextWidth, mTextHeight, juce::Justification::centred);
-    
-    runningWidth += mTextWidth;
-    g.drawText("Dry", runningWidth, mTextOffset, mTextWidth, mTextHeight, juce::Justification::centred);
-    
-    runningWidth += mTextWidth;
-    g.drawText("Wet", runningWidth, mTextOffset, mTextWidth, mTextHeight, juce::Justification::centred);
 }
 
 void GranulizerThingyAudioProcessorEditor::resized()

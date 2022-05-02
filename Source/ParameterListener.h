@@ -14,10 +14,7 @@ class ParameterListenerFloat : public juce::Slider::Listener
 public:
     AudioParameterFloat* mParam;
     
-    ParameterListenerFloat(AudioParameterFloat* param) : mParam(param)
-    {
-        
-    }
+    ParameterListenerFloat(AudioParameterFloat* param) : mParam(param) {}
     
     void sliderValueChanged(juce::Slider* slider) override
     {
@@ -31,10 +28,7 @@ class ParameterListenerInt : public juce::Slider::Listener
 public:
     AudioParameterInt* mParam;
     
-    ParameterListenerInt(AudioParameterInt* param) : mParam(param)
-    {
-        
-    }
+    ParameterListenerInt(AudioParameterInt* param) : mParam(param) {}
     
     void sliderValueChanged(juce::Slider* slider) override
     {

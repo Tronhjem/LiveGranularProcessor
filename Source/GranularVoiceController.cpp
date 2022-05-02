@@ -50,7 +50,6 @@ void GranularVoiceController::Process(AudioBuffer<float>& inBuffer)
             sum /= NumberOfCurrentVoices;
             float tempDry = inBufferPointer[j];
             inBufferPointer[j] = tempDry * DryGain + static_cast<float>(sum * WetGain);
-//            inBufferPointer[j] = tempDry;
         }
     }
 }

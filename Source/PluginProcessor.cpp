@@ -71,9 +71,12 @@ GranulizerThingyAudioProcessor::GranulizerThingyAudioProcessor()
 
 GranulizerThingyAudioProcessor::~GranulizerThingyAudioProcessor()
 {
-
-    delete mDryLevel;
-    
+//    delete mCurrentNumberOfVoices;
+//    delete mGrainWindowSize;
+//    delete mGrainWidowRanSpread;
+//    delete mGrainRepetition;
+//    delete mDryLevel;
+//    delete mWetLevel;
 }
 
 //==============================================================================

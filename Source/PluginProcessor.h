@@ -58,17 +58,15 @@ public:
 private:
     //==============================================================================
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GranulizerThingyAudioProcessor)
-    
     std::unique_ptr<GranularVoiceController> mGrainVoiceController;
-    
     int mSampleRate = 44100;
     float mSampleRateMiliseconds = 44.1f;
-    
     AudioParameterInt*      mCurrentNumberOfVoices;
     AudioParameterInt*      mGrainWindowSize;
     AudioParameterInt*      mGrainWidowRanSpread;
     AudioParameterInt*      mGrainRepetition;
     AudioParameterFloat*    mDryLevel;
     AudioParameterFloat*    mWetLevel;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GranulizerThingyAudioProcessor)
 };
