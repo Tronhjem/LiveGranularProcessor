@@ -71,12 +71,7 @@ GranulizerThingyAudioProcessor::GranulizerThingyAudioProcessor()
 
 GranulizerThingyAudioProcessor::~GranulizerThingyAudioProcessor()
 {
-//    delete mCurrentNumberOfVoices;
-//    delete mGrainWindowSize;
-//    delete mGrainWidowRanSpread;
-//    delete mGrainRepetition;
-//    delete mDryLevel;
-//    delete mWetLevel;
+
 }
 
 //==============================================================================
@@ -184,10 +179,29 @@ void GranulizerThingyAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
 {
     juce::ScopedNoDenormals noDenormals;
     
-    mGrainVoiceController->NumberOfCurrentVoices = mCurrentNumberOfVoices->get();
-    mGrainVoiceController->VoiceGrainWindowSize = mGrainWindowSize->get() * mSampleRateMiliseconds;
-    mGrainVoiceController->VoiceGrainWindowSizeRange = mGrainWidowRanSpread->get() * mSampleRateMiliseconds;
-    mGrainVoiceController->VoiceMaxRepition = mGrainRepetition->get();
+    
+    int numOfVoices = mCurrentNumberOfVoices->get();
+    
+    mGrainVoiceController->NumberOfCurrentVoices = numOfVoices;
+    
+    int windowSize = mGrainWindowSize->get() * mSampleRateMiliseconds;
+    if (windowSize != mGrainVoiceController->VoiceGrainWindowSize)
+        mGrainVoiceController->ParamsDirtied = true;
+    mGrainVoiceController->VoiceGrainWindowSize = windowSize;
+    
+    int windowSpread = mGrainWidowRanSpread->get() * mSampleRateMiliseconds;
+    if (windowSpread != mGrainVoiceController->VoiceGrainWindowSizeRange)
+        mGrainVoiceController->ParamsDirtied = true;
+    
+    mGrainVoiceController->VoiceGrainWindowSizeRange = windowSpread;
+    
+    int repetition = mGrainRepetition->get();
+    if (repetition != mGrainVoiceController->VoiceMaxRepition)
+        mGrainVoiceController->ParamsDirtied = true;;
+    
+    mGrainVoiceController->VoiceMaxRepition = repetition;
+    
+    
     mGrainVoiceController->WetGain = mWetLevel->get();
     mGrainVoiceController->DryGain = mDryLevel->get();
     

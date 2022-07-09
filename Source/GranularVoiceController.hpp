@@ -27,7 +27,8 @@ public:
     ~GranularVoiceController();
     
     void                                        Process(juce::AudioBuffer<float>& inBuffer);
-    int                                         GetCurrentPosition(int channel) const;
+    bool                                        ParamsDirtied = false; // dirty flag for param changed.
+    int                                         GetCurrentPosition(int channel)  const;
     UINT                                        VoiceGrainWindowSizeRange = 1000;
     USHORT                                      VoiceGrainWindowSize = 500;
     USHORT                                      NumberOfCurrentVoices = 4;

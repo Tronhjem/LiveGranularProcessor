@@ -4,6 +4,13 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="wereoo" name="GranulizerThingy">
     <GROUP id="{AA99E46A-63A2-6469-17B4-5F48636AC71E}" name="Source">
+      <FILE id="USar9a" name="AudioBuffer.h" compile="0" resource="0" file="Source/AudioBuffer.h"/>
+      <FILE id="d8iADd" name="CTTypes.h" compile="0" resource="0" file="Source/CTTypes.h"/>
+      <FILE id="O4bFa1" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
+      <FILE id="g17p2P" name="ParameterListener.h" compile="0" resource="0"
+            file="Source/ParameterListener.h"/>
+      <FILE id="zlj4wG" name="UtilityFunctions.h" compile="0" resource="0"
+            file="Source/UtilityFunctions.h"/>
       <FILE id="SqSIBK" name="GranularVoiceController.cpp" compile="1" resource="0"
             file="Source/GranularVoiceController.cpp"/>
       <FILE id="WLGoHW" name="GranularVoiceController.hpp" compile="0" resource="0"

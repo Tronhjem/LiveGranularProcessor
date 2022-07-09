@@ -27,9 +27,10 @@ public:
     float ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT channel);
     
 private:
-    USHORT                          mGrainWindowSize = 400;
     USHORT                          mGraindWindowRandomSpread = 200;
     USHORT                          mMaxGrainIterations = 4;
+    bool                            mWasDirtied = false;
+    int                             mGrainWindowSize = 400;
     int                             mReadStartPosition = 0;
     int                             mCurrentIteration = 0;
     int                             mCurrentSampleCount = 0;

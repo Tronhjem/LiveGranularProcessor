@@ -26,38 +26,40 @@ GranularVoice::~GranularVoice()
 
 float GranularVoice::ProcessSample(CTDSP::AudioBuffer<float>& inBuffer, USHORT channel)
 {
-    UINT bufferSize = inBuffer.GetSizeInSamples();
+    const UINT bufferSize = inBuffer.GetSizeInSamples();
+    
+    mWasDirtied = mController->ParamsDirtied || mWasDirtied;
     
     if (mCurrentSampleCount > mGrainWindowSize)
     {
         mCurrentSampleCount = 0;
         
-        if (mCurrentIteration > mMaxGrainIterations)
+        if (mCurrentIteration > mMaxGrainIterations || mWasDirtied)
         {
-            int randomRange = mRandomGen->nextInt((mController->VoiceGrainWindowSizeRange + 1));
-            int windowSize = mController->VoiceGrainWindowSize;
+            const int randomRange = mRandomGen->nextInt((mController->VoiceGrainWindowSizeRange + 1));
+            const int windowSize = mController->VoiceGrainWindowSize;
             
             mGrainWindowSize = (randomRange - (randomRange * 0.5)) + windowSize;
             if (mGrainWindowSize <= MINIMUM_WINDOW_SIZE)
                 mGrainWindowSize = MINIMUM_WINDOW_SIZE;
                                                   
             mMaxGrainIterations = mController->VoiceMaxRepition + mRandomGen->nextInt(5);
-
             mReadStartPosition = mController->GetCurrentPosition(channel) - mGrainWindowSize;
             mCurrentIteration = 0;
             
-            // wrap around.
+            // Wrap around.
             if (mReadStartPosition < 0)
                 mReadStartPosition += bufferSize;
+            mWasDirtied = false;
         }
         else
             mCurrentIteration++;
     }
     
-    double progression = static_cast<double>(mCurrentSampleCount) / static_cast<double>(mGrainWindowSize);
+    const double progression = static_cast<double>(mCurrentSampleCount) / static_cast<double>(mGrainWindowSize);
     double sampleGainFactor = mController->mEnvelope.GetEnvelope(progression);
     
-    //    // squared gain
+    // squared gain
     sampleGainFactor *= sampleGainFactor;
     
     int readPosition = mReadStartPosition + mCurrentSampleCount;
