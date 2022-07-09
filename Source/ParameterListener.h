@@ -9,6 +9,8 @@
 #define ParameterListener_h
 #include <JuceHeader.h>
 
+//TODO: make these two into a template class with T audioParamter.
+
 class ParameterListenerFloat : public juce::Slider::Listener
 {
 public:

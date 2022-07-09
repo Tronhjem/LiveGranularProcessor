@@ -33,14 +33,15 @@ GranulizerThingyAudioProcessor::GranulizerThingyAudioProcessor()
                                                       1,
                                                       MAX_VOICES,
                                                       3);
-    
     addParameter(mCurrentNumberOfVoices);
+    
     mGrainWindowSize        =   new AudioParameterInt("windowSize",
                                                       "GrainWindowSize",
                                                       1,
                                                       grainWindowSize,
-                                                      500);
+                                                      30);
     addParameter(mGrainWindowSize);
+    
     mGrainWidowRanSpread    =   new AudioParameterInt("windowRanSpread",
                                                       "WindowRandomSpread",
                                                       0,
@@ -179,10 +180,7 @@ void GranulizerThingyAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
 {
     juce::ScopedNoDenormals noDenormals;
     
-    
-    int numOfVoices = mCurrentNumberOfVoices->get();
-    
-    mGrainVoiceController->NumberOfCurrentVoices = numOfVoices;
+    mGrainVoiceController->NumberOfCurrentVoices = mCurrentNumberOfVoices->get();
     
     int windowSize = mGrainWindowSize->get() * mSampleRateMiliseconds;
     if (windowSize != mGrainVoiceController->VoiceGrainWindowSize)
@@ -204,6 +202,8 @@ void GranulizerThingyAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     
     mGrainVoiceController->WetGain = mWetLevel->get();
     mGrainVoiceController->DryGain = mDryLevel->get();
+    
+    
     
     mGrainVoiceController->Process(buffer);
 }

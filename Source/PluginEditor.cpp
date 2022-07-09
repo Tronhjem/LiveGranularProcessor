@@ -39,7 +39,7 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     // WindowSize Slider ====
     mWindowSizeSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     mWindowSizeSlider.setBounds(mSliderWidthIncrement, mSliderHeightOffset, mSliderWidth, mSliderHeight);
-    mWindowSizeSlider.setRange(10.f, 2000.f, 0.1f);
+    mWindowSizeSlider.setRange(1.f, 1000.f, 0.1f);
     mWindowSizeSlider.setValue(30.f);
     mWindowSizeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, mSliderWidth, mTextBoxHeight);
     
@@ -76,7 +76,7 @@ GranulizerThingyAudioProcessorEditor::GranulizerThingyAudioProcessorEditor (Gran
     // Repetition slider
     mGrainRepetitionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     mGrainRepetitionSlider.setBounds(mSliderWidthIncrement, mSliderHeightOffset, mSliderWidth, mSliderHeight);
-    mGrainRepetitionSlider.setRange(0, 100, 1);
+    mGrainRepetitionSlider.setRange(0, 50, 1);
     mGrainRepetitionSlider.setValue(3);
     mGrainRepetitionSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, mSliderWidth, mTextBoxHeight);
     
@@ -150,6 +150,7 @@ void GranulizerThingyAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (12.0f);
+    
 }
 
 void GranulizerThingyAudioProcessorEditor::resized()

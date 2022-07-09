@@ -54,19 +54,21 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-
+  
+    
 private:
     //==============================================================================
     
-    std::unique_ptr<GranularVoiceController> mGrainVoiceController;
-    int mSampleRate = 44100;
-    float mSampleRateMiliseconds = 44.1f;
     AudioParameterInt*      mCurrentNumberOfVoices;
     AudioParameterInt*      mGrainWindowSize;
     AudioParameterInt*      mGrainWidowRanSpread;
     AudioParameterInt*      mGrainRepetition;
     AudioParameterFloat*    mDryLevel;
     AudioParameterFloat*    mWetLevel;
+    
+    std::unique_ptr<GranularVoiceController> mGrainVoiceController;
+    int mSampleRate = 44100;
+    float mSampleRateMiliseconds = 44.1f;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GranulizerThingyAudioProcessor)
 };

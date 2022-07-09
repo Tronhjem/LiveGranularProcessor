@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="HT4SDh" name="GranulizerThingy" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="SonoTron Labs">
   <MAINGROUP id="wereoo" name="GranulizerThingy">
     <GROUP id="{AA99E46A-63A2-6469-17B4-5F48636AC71E}" name="Source">
       <FILE id="USar9a" name="AudioBuffer.h" compile="0" resource="0" file="Source/AudioBuffer.h"/>
