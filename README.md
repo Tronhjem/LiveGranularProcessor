@@ -1,6 +1,8 @@
 # Granulizer Thingy / Live Granular Processor
 
-This was an experiment to try out a graunular processor with 1-6 voices that processes live input. 
+This was an experiment to try out a graunular processor with 1-6 voices that processes live input.
+It's meant as a experimentation plugin for exploring before making it into a more effecient plugin for AudioKinetic Wwise. 
+
 The idea was to keep audio in a circular buffer in order to make grains play back from the live input. 
 A grain will start playing from the record position. It will play for the duration of the grain size, set in miliseconds. 
 Reptitions slider chooses how many times it will repeat this grain before selecting a new grain window at the record position. 
